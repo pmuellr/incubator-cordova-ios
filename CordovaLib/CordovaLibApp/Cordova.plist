@@ -72,6 +72,8 @@
 		<string>CDVSplashScreen</string>
 		<key>Battery</key>
 		<string>CDVBattery</string>
+		<key>Logger</key>
+		<string>CDVLogger</string>
 	</dict>
 </dict>
 </plist>
