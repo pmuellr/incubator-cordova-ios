@@ -148,6 +148,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
     // to be more lenient.
     NSURL* url = [NSURL URLWithString:server];
 
+    CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
+    CDVWhitelist* whitelist = cdvViewController.whitelist;
+    if (![whitelist URLIsAllowed:url]) {
+        url = nil;
+    }
+
     if (!url) {
         errorCode = INVALID_URL_ERR;
         NSLog(@"File Transfer Error: Invalid server URL %@", server);
@@ -328,6 +334,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
     NSURL* url = [NSURL URLWithString:sourceUrl];
 
+    CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
+    CDVWhitelist* whitelist = cdvViewController.whitelist;
+    if (![whitelist URLIsAllowed:url]) {
+        url = nil;
+    }
+
     if (!url) {
         errorCode = INVALID_URL_ERR;
         NSLog(@"File Transfer Error: Invalid server URL %@", sourceUrl);
@@ -476,6 +488,12 @@ static CFIndex WriteDataToStream(NSData* data, CFWriteStreamRef stream)
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response
 {
+    if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
+        self.responseCode = 403;
+        self.bytesExpected = [response expectedContentLength];
+        return;
+    }
+
     NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
 
     self.responseCode = [httpResponse statusCode];
